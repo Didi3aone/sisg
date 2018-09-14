@@ -61,10 +61,10 @@
 				<!-- <div class="text-center">
 					<img src="img/demo/demo-smartbig-alert.png" alt="demo" class="img-responsive">
 				</div> -->
-				YOUR LOGIN IN BROWSER <h5><b><?= $browser ?></b></h5>
-				<p class="note">
+				YOU ARE LOGIN IN BROWSER <h5><b><?= $browser ?></b></h5>
+				<!-- <p class="note">
 					<span class="label bg-color-darken txt-color-white">INFO!</span> Messages are tabbale and does not overpopulate the user screen. Sounds can also be disabled if not needed
-				</p>				
+				</p>	 -->			
 			</div>
 			<!-- end well -->				
 		</div>

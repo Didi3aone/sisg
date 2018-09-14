@@ -55,7 +55,7 @@ $route['translate_uri_dashes'] = TRUE;
 
 $route['login'] = "index/auth/login";
 $route['logout'] = "index/auth/logout";
-$route['forgot-password'] = "index/auth/forgot";
+$route['forgot-password'] = "index/auth/forgot-password";
 $route['reset-password/(:any)'] = "index/index/reset-password/$1";
 // $route['del/(:any)'] = 'crud/del';
 // Other routes as needed...

@@ -12,7 +12,7 @@ class Admin extends CI_Controller  {
     private $_breadcrumb = "<li><a href='".MANAGER_HOME."'>Home</a></li>";
     private $_active_page = "admin";
     private $_back = "/admin";
-    private $_js_path = "/js/pages/admin/";
+    private $_js_path = "assets/js/pages/admin/";
     private $_view_folder = "admin/";
 
     /**
@@ -203,7 +203,7 @@ class Admin extends CI_Controller  {
         );
 
         $footer = array(
-            "script" => $this->_js_path . "change_password.js",
+            "view_js_nav" => $this->_view_folder . "change_pass_js",
         );
 
 		//load the view.
@@ -262,9 +262,9 @@ class Admin extends CI_Controller  {
     private function _set_rule_validation_pass () {
         $this->form_validation->set_error_delimiters('', '');
 
-        $this->form_validation->set_rules("password", "Old Password", "required|min_length[6]|max_length[12]|callback_password_check");
-        $this->form_validation->set_rules("new_password", "New Password", "required|min_length[6]|max_length[12]|matches[confirm_password]");
-        $this->form_validation->set_rules("confirm_password", "Confirm Password", "required|min_length[6]|max_length[12]");
+        $this->form_validation->set_rules("password", "Old Password", "required|min_length[4]|max_length[12]|callback_password_check");
+        $this->form_validation->set_rules("new_password", "New Password", "required|min_length[4]|max_length[12]|matches[confirm_password]");
+        $this->form_validation->set_rules("confirm_password", "Confirm Password", "required|min_length[4]|max_length[12]");
     }
 
     /**
@@ -325,7 +325,7 @@ class Admin extends CI_Controller  {
         $pass = $this->session->userdata('password');
 
 		//check password
-		if (password_verify($old_pass, $pass)) {
+		if ($pass == sha1( ENCRYPT_DEV_AKS . $this->db->escape_str($old_pass))) {
 			return TRUE;
 		} else {
 			$this->form_validation->set_message('password_check', '{field} does not match');
@@ -702,7 +702,9 @@ class Admin extends CI_Controller  {
             $this->db->trans_begin();
 
             //validation success, prepare array to DB.
-            $SaveData = array('password'   => $password);
+            $SaveData = array(
+                'user_password'   => sha1(ENCRYPT_DEV_AKS . $this->db->escape_str($password))
+            );
 
 			if (!empty($id)) {
 				$condition = array("user_id" => $id);
@@ -725,18 +727,25 @@ class Admin extends CI_Controller  {
                 $message['notif_message'] = "Password has been updated.";
 
                 //on insert, not redirected.
-                $message['redirect_to'] = "/";
+                $message['redirect_to'] = site_url('dashboard');
 
 
 				//re-set the session
-				$params = array("row_array" => true,"conditions" => array("user_id" => $id));
-                $data_admin = $this->Admin_model->get_all_data($params)['datas'];
+				$params = array(
+                    "row_array"     => true,
+                    "conditions"    => array("user_id" => $id)
+                );
+
+                $result = $this->Admin_model->get_all_data($params)['datas'];
                 $sess_data = array(
                     "IS_LOGIN_ADMIN" => TRUE,
-                    "name"           => $data_admin['user_name'],
-                    "email"          => $data_admin['user_email'],
-                    "password"       => $data_admin['user_password'],
-                    "user_id"        => $data_admin['user_id']
+                    "name"           => $result['user_name'],
+                    "email"          => $result['user_email'],
+                    "password"       => $result['user_password'],
+                    "user_id"        => $result['user_id'],
+                    "user_state"     => $result['user_state'],
+                    "nik"            => $result['user_nik']
+                    //"level"          => $result['role_name']
                 );
                 $this->session->set_userdata($sess_data);
 			}

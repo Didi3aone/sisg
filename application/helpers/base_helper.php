@@ -358,6 +358,16 @@ function searchForIdInt($id, $array, $string) {
 	   return null;
 }
 
+function url_encode($string)
+{
+    return urlencode($string);
+}
+
+function url_decode($string)
+{
+    return urldecode($string);
+}
+
 function dash_punctuation($string) {
     $s = strtolower($string);
     # to keep letters & numbers

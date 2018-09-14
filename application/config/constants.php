@@ -123,9 +123,9 @@ define("WORDS_MAX_IMPORT_FILE_SIZE", "5 MB");
 
 
 //-- EMAIL
-define("DEFAULT_EMAIL_FROM", "didi@aseanindo.com");
+define("DEFAULT_EMAIL_FROM", "development@it-underground.web.id");
 define("DEFAULT_EMAIL_FROM_NAME", "Info aseanindo");
-define("DEFAULT_EMAIL_RETURN_PATH", "info@aseanindo.com");
+define("DEFAULT_EMAIL_RETURN_PATH", "development@it-underground.web.id");
 
 define("SUBJECT_RESET_PASSWORD", "Reset Password Information");
 define("SUBJECT_PASSWORD_INFO", "Password Information");

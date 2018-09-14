@@ -34,7 +34,7 @@
                     <!-- widget div-->
                     <div>
 
-                        <form class="smart-form" id="changepass-form" action="/admin/change-password-process" method="post">
+                        <form class="smart-form" id="changepass-form" action="<?= site_url(); ?>admin/change-password-process" method="post">
                             <fieldset>
                                 <section>
                                     <label class="label">Old Password <sup class="color-red">*</sup></label>

@@ -6,7 +6,7 @@
 
 	var lists = function () {
 	    var table_id = "#dataTable";
-	    var ajax_source = "<?= site_url('slip/list_all_datas') ?>";
+	    var ajax_source = "<?= site_url('slip/list_all_data_hsbc') ?>";
 	    var url = "<?= site_url('slip/'); ?>";
 	    var columns = [
 	        {"data": "upload_id" },

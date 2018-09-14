@@ -2,9 +2,16 @@
         </div>
 		<!-- END #MAIN PANEL -->
         <div class="page-footer">
+            <?php
+                $log = $this->Dynamic_model->set_model("tbl_change_log","tcl","log_id")->get_all_data(
+                    array(
+                        "row_array" => true,
+                        "order_by" => array("log_id" => "desc")
+                    ))['datas'];
+            ?>
             <div class="row">
                 <div class="col-xs-12 col-sm-6">
-                    <span class="txt-color-white">SISG V 1.0.1 <span class="hidden-xs"></span> © 2018</span>
+                    <span class="txt-color-white">SISG <a href="<?= site_url('change_log'); ?>" target="_blank" class="txt-color-white">V <?= $log['log_curr_version']; ?> </a> <span class="hidden-xs"></span> © 2018</span>
                 </div>
             </div>
         </div>
@@ -12,9 +19,9 @@
 			 Note: These tiles are completely responsive, you can add as many as you like -->
 		<div id="shortcut">
 			<ul>
-				<li>
-					<a href="<?= site_url(); ?>admin/change-profile" class="jarvismetro-tile big-cubes bg-color-blue"> <span class="iconbox"> <i class="fa fa-id-card-o fa-4x"></i> <span>Change Profile </span> </span> </a>
-				</li>
+				<!-- <li>
+					<a href="<?php // site_url(); ?>admin/change-profile" class="jarvismetro-tile big-cubes bg-color-blue"> <span class="iconbox"> <i class="fa fa-id-card-o fa-4x"></i> <span>Change Profile </span> </span> </a>
+				</li> -->
                 <li>
 					<a href="<?= site_url(); ?>admin/change_password" class="jarvismetro-tile big-cubes bg-color-blue"> <span class="iconbox"> <i class="fa fa-key fa-4x"></i> <span>Change Password </span> </span> </a>
 				</li>

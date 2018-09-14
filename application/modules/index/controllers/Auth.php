@@ -55,7 +55,7 @@ class Auth extends MX_Controller  {
 
 			//check to the model if the username, email and password is correct.
 			$result = $this->Admin_model->check_login($nik, $password);
-
+			// pr($result);exit;
 			//validate result.
 			if ($result) {
                 //set session user (for login).
@@ -107,195 +107,207 @@ class Auth extends MX_Controller  {
 	 * Forgot password (reset password function).
 	 * it will send the "reset password" email from here.
 	 */
-	// public function forgot_password() {
+	public function forgot_password() {
 
-	// 	//load library and model.
-	// 	$this->load->library('form_validation');
- //        $this->load->model("admin/Admin_model");
-
- //        //set validations rules.
- //        $this->form_validation->set_rules("email", "Email", "trim|required|valid_email");
-
- //        $footer = array("script" => '/js/pages/index/login.js');
- //        $header = array("title" => 'Forgot Password');
-
-	// 	//check for validation.
- //        if ($this->form_validation->run() == FALSE){
-
- //        	//send error message to view.
-	// 		$error_message = validation_errors();
-	// 		$this->session->set_flashdata('message', $error_message);
-	// 		$this->session->set_flashdata('alert', 'danger');
-
-	// 	} else {
-
- //            //get the posted values
- //            $email = $this->input->post("email");
-
-	// 		//check to the model if the email is correct.
-	// 		$result = $this->Admin_model->get_all_data(array(
- //                "row_array" => TRUE,
- //                "conditions" => array("user_email" => $email),
- //            ))['datas'];
-
-	// 		//validate result.
-	// 		if ($result) {
- //                //send email to reset password.
-
- //                //using transaction.
-	// 			$this->db->trans_begin();
-
- //                //create an url which the user can click to reset their password.
-	// 			$forgot_link = $this->Admin_model->send_forgot_pass($result);
-
- //                //end transaction.
-	// 			if ($this->db->trans_status() === FALSE) {
-	// 				$this->db->trans_rollback();
-
- //                    //error something.
-	// 				$this->session->set_flashdata('message', 'There is something wrong. Please retry input your email.');
-	// 				$this->session->set_flashdata('alert', 'danger');
-
-	// 			} else {
- //                    //success and commiting.
-	// 				$this->db->trans_commit();
-
-	// 				//send email to user with the reset password link.
- //                    //get content from view
- //                    $content = $this->load->view('layout/email/forgot_password', '', true);
- //                    $content = str_replace('%NAME%',$result['user_name'],$content);
- //                    $content = str_replace('%LINK%',$forgot_link,$content);
-
-	// 				$mail = sendmail (array(
-	// 					'subject'	=> SUBJECT_RESET_PASSWORD,
-	// 					'message'	=> $content,
-	// 					'to'		=> array($result['user_email']),
-	// 				), "html");
-
-	// 				//success, info to check user email.
-	// 				$this->session->set_flashdata('message', 'Please check your email to reset your password.');
-	// 				$this->session->set_flashdata('alert', 'success');
-	// 			}
-
-	// 		} else {
-	// 			//invalid email.
-	// 			$this->session->set_flashdata('message', 'Email is wrong.');
-	// 			$this->session->set_flashdata('alert', 'danger');
- //            }
-	// 	}
-
- //        //load the views.
-	// 	$this->load->view(MANAGER_HEADER_SIGNIN ,$header);
-	// 	$this->load->view($this->_view_folder . 'forgot-password');
-	// 	$this->load->view(MANAGER_FOOTER_SIGNIN ,$footer);
-	// }
-
-	/**
-	 * Forgot password page
-	 */
-	public function forgot()
-	{
-		// Redirect to your logged in landing page here
-		// if(logged_in()) redirect('auth/dash');
-		$this->load->library('email');
-		$config['protocol']    = 'smtp';
-		$config['smtp_host']    = 'mail.it-underground.web.id';
-		$config['smtp_port']    = '465';
-		$config['smtp_timeout'] = '7';
-		$config['smtp_user']    = 'development@it-underground.web.id';
-		$config['smtp_pass']    = 'kipasangin';
-		$config['charset']    	= 'utf-8';
-		$config['newline']    	= "\r\n";
-		$config['mailtype'] 	= 'html'; // or html
-		$config['validation'] 	= TRUE; // bool whether to validate email or not      
-		$this->email->initialize($config);
-		 
+		//load library and model.
 		$this->load->library('form_validation');
-		$this->load->helper('form');
-		$data['success'] = false;
-		 
-		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_exists');
-		
-		if($this->form_validation->run() == TRUE){
-			$email = $this->input->post('email');
+        $this->load->model("admin/Admin_model");
 
-			$this->load->model('Dynamic_model');
-			$params = array(
-				"select" => "user_email",
-				"conditions" => array("user_email" => $email),
-			);
-			$user = $this->Dynamic_model->set_model("mst_user", "mu","user_id")->get_all_data($params)['datas'];
+        //set validations rules.
+        $this->form_validation->set_rules("email", "Email", "trim|required|valid_email");
 
-			$slug = md5($user['user_id'] . $user['user_email'] . date('Ymd'));
-			$this->load->library('email');
-			$this->email->from('development@it-underground.web.id', 'Didi test'); // Change these details
-			$this->email->to($email); 
-			$this->email->subject('Reset your Password');
-			$this->email->message(
-				'To reset your password please click the link below and follow the instructions:'. site_url('auth/reset/'. $user['user_id'] .'/'. $slug) .'
-			If you did not request to reset your password then please just ignore this email and no changes will occur.
-			Note: This reset code will expire after '. date('j M Y') .'.');	
-			$this->email->send();
-			
-			$data['success'] = true;
+        $footer = array("script" => 'assets/js/pages/index/login.js');
+        $header = array("title" => 'Forgot Password');
+
+		//check for validation.
+        if ($this->form_validation->run() == FALSE){
+
+        	//send error message to view.
+			$error_message = validation_errors();
+			$this->session->set_flashdata('message', $error_message);
+			$this->session->set_flashdata('alert', 'danger');
+
+		} else {
+
+            //get the posted values
+            $email = $this->input->post("email");
+
+			//check to the model if the email is correct.
+			$result = $this->Admin_model->get_all_data(array(
+                "row_array" => TRUE,
+                "conditions" => array("user_email" => $email),
+            ))['datas'];
+
+			//validate result.
+			if ($result) {
+                //send email to reset password.
+
+                //using transaction.
+				$this->db->trans_begin();
+
+
+                //end transaction.
+				if ($this->db->trans_status() === FALSE) {
+					$this->db->trans_rollback();
+
+                    //error something.
+					$this->session->set_flashdata('message_failed', 'There is something wrong. Please retry input your email.');
+					$this->session->set_flashdata('alert', 'danger');
+
+				} else {
+                    //success and commiting.
+					$this->db->trans_commit();
+
+					//get id
+                    $name      = $result['user_name'];
+                    $id 	   = $result['user_id'];
+                    // $name 	 = urlencode($name);
+                    //send url
+                    $link = base_url()."index/auth/reset-password/".urlencode($name).'<br/>';
+
+                    $code 	   = uniqid();
+                    $message   = "Hello, ".$result['user_name']."<br/>";
+                    $message  .= "Silahkan ikuti langkah-langkah dibawah untuk mengganti password anda <br/>";
+                    $message  .= "Click this $link to reset your password. <br/>";
+                    $message  .= "Enter code <a>$code</a> <br/>";
+                    $message  .= "Have a nice day. <br/>";
+                    $message  .= "<br/> <br/><br/>";
+                    // $message  .= "best regards"."<br/>";
+                    $message  .= "<img src=".base_url("assets/img/aks.png").">"."<br/>";
+                    $message  .= "Didi ganteng";
+
+					$mail = sendmail (array(
+						'subject'	=> SUBJECT_RESET_PASSWORD,
+						'message'	=> $message,
+						'to'		=> array($result['user_email']),
+					), "html");
+
+					//success, info to check user email.
+					$this->session->set_flashdata('message_success', 'Please check your email to reset your password.');
+					$this->session->set_flashdata('alert', 'success');
+
+					$res = $this->Admin_model->update(array(
+						"user_unique_code"     => $code,
+						"user_forgot_passtime" => date("Y-m-d H:i:s"),
+						"user_updated_date"    => date("Y-m-d H:i:s"),
+						"user_ip_address"	   => get_client_ip()
+					),array("user_id" => $result['user_id']));
+				}
+
+			} else {
+	 			//invalid email.
+				$this->session->set_flashdata('message_failed', 'Email is wrong.');
+				$this->session->set_flashdata('alert', 'danger');
+            }
 		}
-		
-	 	$this->load->view(MANAGER_HEADER_SIGNIN );
+
+        //load the views.
+		$this->load->view(MANAGER_HEADER_SIGNIN ,$header);
 		$this->load->view($this->_view_folder . 'forgot-password');
-		$this->load->view(MANAGER_FOOTER_SIGNIN );
+		$this->load->view(MANAGER_FOOTER_SIGNIN ,$footer);
 	}
+
+	public function reset_password ($name = null) {
+        //load the model.
+		$this->load->model('admin/Admin_model');
+		$name = urldecode($name);
+
+        $params = array("row_array" => true,"conditions" => array("user_name" => $name));
+        //get the data.
+        $data['datas'] = $this->Admin_model->get_all_data($params)['datas'];
+
+        $footer = array(
+        	
+        );
+		//load the view.
+		$this->load->view(MANAGER_HEADER_SIGNIN);
+        $this->load->view($this->_view_folder . 'reset-password', $data);
+		// $this->load->view(MANAGER_FOOTER, $footer);
+    }
+
+	
 	/**
 	 * function to reset password.
 	 * from link in reset password email.
 	 */
-	public function reset_password($code) {
+	public function process_reset_password() {
 
         //load model.
 		$this->load->model('admin/Admin_model');
+		//load server validation
+		$this->load->library('form_validation');
+		$message['is_error'] = true;
 
-        //check code.
-		if (!$code) {
-			show_404();
-		}
+		$id 			= $this->input->post('id');
+		$password       = $this->input->post('password');
+        $new_password   = $this->input->post('conf_password');
+        $code 			= $this->input->post('code');
 
-		//decode code.
-		$code_decoded = base64_decode(urldecode($code));
+		$this->form_validation->set_rules('password', 'Password', "trim|required|min_length[4]|max_length[20]");
+        $this->form_validation->set_rules('conf_password', 'Confirmation Password', "trim|required|min_length[4]|max_length[20]|matches[password]");
 
-		//check code if exist.
-		$user = $this->Admin_model->checkCode($code_decoded);
+		// pr($this->input->post());exit;
+        if( $this->form_validation->run() == FALSE) {
+        	$message['error_message'] = validation_errors();
+        } else {
 
-        //begin transaction.
-		$this->db->trans_begin();
+	        //begin transaction.
+			$this->db->trans_begin();
 
-		//reset passsword.
-		$new_pass = $this->Admin_model->reset_password($user);
+			//cek_code
+			$codes = $this->Admin_model->get_all_data(array(
+				"row_array" 	=> true,
+				"conditions" 	=> array("user_id" => $id)
+			))['datas'];
+			// pr($codes);
+			if($codes['user_unique_code'] != $code) {
+				$message['is_error'] 	= true;
+				$message['error_msg'] 	= "Invalid code";
+				$this->output->set_content_type('application/json');
+				echo json_encode($message);
+				exit;	
+			}
 
-        //end transaction.
-		if ($this->db->trans_status() === FALSE) {
-			$this->db->trans_rollback();
+			if($new_password != $password) {
+				$message['is_error'] 	= true;
+				$message['error_msg'] 	= "Password do not match";
+				$this->output->set_content_type('application/json');
+				echo json_encode($message);
+				exit;	
+			}
 
-            //some kind of DB problem?
-			show_404();
+			$_save_data = array(
+				"user_password" 	   => sha1(ENCRYPT_DEV_AKS.$this->db->escape_str($new_password)),
+				"user_forgot_passtime" => date("Y-m-d H:i:s"),
+				"user_ip_address"	   => get_client_ip()
+			);
 
-		} else {
-            //success and commiting.
-			$this->db->trans_commit();
+			if( $_save_data )
+			{
+				// pr($this->input->post());exit;
+				$result = $this->Admin_model->update($_save_data, array("user_id" => $id));
 
-			//send email for the newly generated password.
-            //get content from view
-            $content = $this->load->view('layout/email/reset_password', '', true);
-            $content = str_replace('%NAME%',$user['user_email'],$content);
-            $content = str_replace('%NEW_PASS%',$new_pass,$content);
+				if ($this->db->trans_status() === FALSE) {
+                    $this->db->trans_rollback();
+                    $message['error_msg'] = 'Internal server error.';
 
-			$mail = sendmail (array(
-				'subject'	=> SUBJECT_PASSWORD_INFO,
-				'message'	=> $content,
-				'to'		=> array($user['user_email']),
-			), "html");
+                } else {
+                    $this->db->trans_commit();
 
-			//close window
-			echo "<script>window.close();</script>";
-		}
+                    $message['is_error'] = false;
+                    //success.
+                    //growler.
+                    $message['notif_title']     = "Good!";
+                    $message['notif_message']   = "Change password success.";
+                    //on insert, not redirected.
+                    $message['redirect_to']     = "";
+                }
+			}
+        }
+
+        $this->output->set_content_type('application/json');
+        echo json_encode($message);
+        exit;
 	}
 
 }

@@ -5,17 +5,17 @@
     var change_pass_rules = {
         password: {
             required: true,
-            minlength: 6,
+            minlength: 4,
             maxlength: 12,
         },
         new_password: {
             required: true,
-            minlength: 6,
+            minlength: 4,
             maxlength: 12,
         },
         confirm_password: {
             required: true,
-            minlength: 6,
+            minlength: 4,
             maxlength: 12,
             equalTo: '#new_password'
         },

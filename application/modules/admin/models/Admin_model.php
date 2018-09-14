@@ -186,10 +186,10 @@ class Admin_model extends CI_Model {
      */
     public function insert($datas, $extra_param = array())
     {
-        if (isset($datas['user_password'])) 
-        {
-            $datas['user_password'] =  sha1( ENCRYPT_DEV_AKS . $this->db->escape_str($datas['user_password']));
-        }
+        // if (isset($datas['user_password'])) 
+        // {
+        //     $datas['user_password'] =  sha1( ENCRYPT_DEV_AKS . $this->db->escape_str($datas['user_password']));
+        // }
 
         //add create date and update date
         $this->db->insert($this->_table, $datas);
@@ -203,13 +203,6 @@ class Admin_model extends CI_Model {
      */
     public function update($datas, $condition, $extra_param = array())
     {
-        if (isset($datas['user_password'])) 
-        {
-            $datas['user_password'] =  sha1( 
-                ENCRYPT_DEV_AKS . $this->db->escape_str($datas['user_password'])
-            );
-        }
-
         $update = $this->db->update($this->_table, $datas, $condition);
         return $update;
     }
@@ -243,11 +236,11 @@ class Admin_model extends CI_Model {
         $this->db->select("tu.*, tsr.*");
         $this->db->from("mst_user tu");
         $this->db->join("trs_user_role tsr", "tsr.role_id = tu.user_role_id", "inner");
-        $this->db->where("tu.user_nik", $nik);
+        $this->db->where("(tu.user_nik = '$nik' OR tu.user_name='$nik')");
         $this->db->where("tu.user_is_active", STATUS_ACTIVE);
         // echo $this->db->last_query();
         $user = $this->db->get($this->_table)->row_array();
-        // echo $this->db->last_query();
+        //echo $this->db->last_query();
         //if no user found, it's wrong then.
         if (!$user) {
             return false;
@@ -267,45 +260,5 @@ class Admin_model extends CI_Model {
         $this->db->where("user_name" , $username);
         $this->db->where("user_nik", $nik);
         return $this->db->get($this->_table)->row_array();
-    }
-
-    private function _generate_forgot_code($id) {
-
-        //create a unique code, and make sure
-        //that there is no same unique code in the table.
-        do {
-            $generated_link = uniqid();
-        } while ($this->checkCode($generated_link));
-
-        //insert to user's "unique_code".
-        $this->update(array(
-            "user_unique_code" => $generated_link,
-            "user_forgot_passtime" => strtotime("+1 day"),
-        ),array(
-            "user_id" => $id,
-        ));
-
-        return $generated_link;
-    }
-
-
-    //find if the generated code is exists in the table or not.
-    public function checkCode($link) {
-        $this->db->where("user_unique_code", $link);
-        return $this->db->get($this->_table)->row_array();
-    }
-
-
-    //method to generate an url with a unique code.
-    public function send_forgot_pass($datas) {
-
-        //create unique code.
-        $code = $this->_generate_forgot_code($datas['user_id']);
-
-        //encode the unique code.
-        $link = base_url()."/index/auth/reset-password/".urlencode(base64_encode($code));
-
-        //return as valid URL link.
-        return $link;
     }
 }

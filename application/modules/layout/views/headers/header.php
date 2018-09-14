@@ -123,16 +123,30 @@
                             <li class="<?= (isset($active_page) && $active_page == "slip-list") ? "active" : "" ?>">
 								<a href="<?= site_url("slip") ?>" title="SLIP AKS"><span class="menu-item-parent">View AKS</span></a>
 							</li>
-							<?php elseif( $level == "STAFF HSBC") : ?>
+							<?php elseif( $level == "AGENT HSBC") : ?>
 							<li class="<?= (isset($active_page) && $active_page == "slip-hsbc-list") ? "active" : "" ?>">
-								<a href="<?= site_url("slip/list") ?>" title="SLIP HSBC"><span class="menu-item-parent">View HSBC</span></a>
+								<a href="<?= site_url("slip/list") ?>" title="SLIP Slip"><span class="menu-item-parent">View Slip</span></a>
 							</li>
-							<?php else : ?>
+							<?php elseif( $level == "AGENT BNI") : ?>
+							<li class="<?= (isset($active_page) && $active_page == "slip-bni-list") ? "active" : "" ?>">
+								<a href="<?= site_url("slip/list_bni") ?>" title="SLIP Slip"><span class="menu-item-parent">View Slip</span></a>
+							</li>
+							<?php elseif($level == "AGENT DIPO") :?>
+							<li class="<?= (isset($active_page) && $active_page == "slip-dipo-list") ? "active" : "" ?>">
+								<a href="<?= site_url("slip/list_dipo") ?>" title="SLIP Slip"><span class="menu-item-parent">View Slip</span></a>
+							</li>
+							<?php else :?>
 							<li class="<?= (isset($active_page) && $active_page == "slip-list") ? "active" : "" ?>">
-								<a href="<?= site_url("slip") ?>" title="SLIP AKS"><span class="menu-item-parent">View AKS</span></a>
+								<a href="<?= site_url("slip") ?>" title="SLIP AKS"><span class="menu-item-parent">View Slip AKS</span></a>
 							</li>
 							<li class="<?= (isset($active_page) && $active_page == "slip-hsbc-list") ? "active" : "" ?>">
-								<a href="<?= site_url("slip/list") ?>" title="SLIP HSBC"><span class="menu-item-parent">View HSBC</span></a>
+								<a href="<?= site_url("slip/list") ?>" title="SLIP HSBC"><span class="menu-item-parent">View Slip HSBC</span></a>
+							</li>
+							<li class="<?= (isset($active_page) && $active_page == "slip-bni-list") ? "active" : "" ?>">
+								<a href="<?= site_url("slip/list_bni") ?>" title="SLIP BNI"><span class="menu-item-parent">View Slip BNI</span></a>
+							</li>
+							<li class="<?= (isset($active_page) && $active_page == "slip-dipo-list") ? "active" : "" ?>">
+								<a href="<?= site_url("slip/list_dipo") ?>" title="SLIP HSBC"><span class="menu-item-parent">View Slip DIPO</span></a>
 							</li>
 						<?php endif; ?>
 						</ul>
@@ -145,19 +159,35 @@
 							<a href="#"><i class="fa fa-lg fa-fw fa-upload"></i> <span class="menu-item-parent">Upload Data</span></a>
 	                        <ul>
 								<li class="<?= (isset($active_page) && $active_page == "import") ? "active" : ""?>">
-									<a href="<?= site_url('upload/import'); ?>" title="Upload Data"><span class="menu-item-parent">Upload data internal</span></a>
+									<a href="<?= site_url('upload/import'); ?>" title="Upload Data"><span class="menu-item-parent">Upload slip internal</span></a>
 								</li>
 
 								<li class="<?= (isset($active_page) && $active_page == "import-hsbc") ? "active" : ""?>">
-									<a href="<?= site_url('upload/import_hsbc'); ?>" title="Upload Data"><span class="menu-item-parent">Upload data agent</span></a>
+									<a href="<?= site_url('upload/import_hsbc'); ?>" title="Upload Data"><span class="menu-item-parent">Upload slip agent HSBC</span></a>
 								</li>
 
-								<li class="<?= (isset($active_page) && $active_page == "import-user") ? "active" : ""?>">
-									<a href="<?= site_url('upload/import_user'); ?>" title="Upload Data"><span class="menu-item-parent">Upload data user</span></a>
+								<li class="<?= (isset($active_page) && $active_page == "import-bni") ? "active" : ""?>">
+									<a href="<?= site_url('upload/import_bni'); ?>" title="Upload Data"><span class="menu-item-parent">Upload slip agent BNI</span></a>
 								</li>
+
+								<li class="<?= (isset($active_page) && $active_page == "import-dipo") ? "active" : ""?>">
+									<a href="<?= site_url('upload/import_dipo'); ?>" title="Upload Data"><span class="menu-item-parent">Upload slip agent DIPO</span></a>
+								</li>
+
+							</ul>
+						</li>
+
+						<li class="">
+							<a href="#"><i class="fa fa-lg fa-fw fa-users"></i> <span class="menu-item-parent">Upload Data User</span></a>
+	                        <ul>
+								<li class="<?= (isset($active_page) && $active_page == "import-user") ? "active" : ""?>">
+									<a href="<?= site_url('upload/import-user'); ?>" title="Upload Data"><span class="menu-item-parent">Upload data user</span></a>
+								</li>
+								
 							</ul>
 						</li>
 					<?php } ?>
+
 					<?php 
                     	$level = $this->session->userdata("level");
 	                    if( $level == "SYSTEM" || $level == "ADMINISTRATOR") { ?>
@@ -165,7 +195,19 @@
 							<a href="#"><i class="fa fa-lg fa-fw fa-user"></i> <span class="menu-item-parent">Manage User</span></a>
 	                        <ul>
 								<li class="<?= (isset($active_page) && $active_page == "user-list") ? "active" : ""?>">
-									<a href="<?= site_url('user'); ?>" title="Create Group"><span class="menu-item-parent">List Data</span></a>
+									<a href="<?= site_url('user'); ?>" title="Create Group"><span class="menu-item-parent">List Data Internal</span></a>
+								</li>
+
+								<li class="<?= (isset($active_page) && $active_page == "user-list-hsbc") ? "active" : ""?>">
+									<a href="<?= site_url('user/list-hsbc'); ?>" title="Create Group"><span class="menu-item-parent">List Data User HSBC</span></a>
+								</li>
+
+								<li class="<?= (isset($active_page) && $active_page == "user-list-bni") ? "active" : ""?>">
+									<a href="<?= site_url('user/list-bni'); ?>" title="Create Group"><span class="menu-item-parent">List Data User BNI</span></a>
+								</li>
+
+								<li class="<?= (isset($active_page) && $active_page == "user-list-dipo") ? "active" : ""?>">
+									<a href="<?= site_url('user/list-dipo'); ?>" title="Create Group"><span class="menu-item-parent">List Data User DIPO</span></a>
 								</li>
 
 								<li class="<?= (isset($active_page) && $active_page == "user-create") ? "active" : ""?>">

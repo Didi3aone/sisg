@@ -65,10 +65,10 @@ class Upload extends CI_Controller {
         //prepare header title.
         $this->_header = array(
             "title"         => $this->_title,
-            "title_page"    => $this->_title_page . '<span>> Upload Data AKS</span>',
+            "title_page"    => $this->_title_page . '<span>> Upload Data SLIP AKS</span>',
             "title_msg"     => "Form Create",
             "active_page"   => "import",
-            "breadcrumb"    => $this->_breadcrumb . '<li>Upload Data AKS</li>',
+            "breadcrumb"    => $this->_breadcrumb . '<li>Upload Data SLIP AKS</li>',
             "back"          => $this->_back,
         );
 
@@ -85,17 +85,17 @@ class Upload extends CI_Controller {
     }
 
     /**
-     * upload data hsbc
+     * upload data slip hsbc
      */
     public function import_hsbc () {
         $this->_breadcrumb .= '<li><a href="#">upload</a></li>';
         //prepare header title.
         $this->_header = array(
             "title"         => $this->_title,
-            "title_page"    => $this->_title_page . '<span>> Upload Data HSBC</span>',
+            "title_page"    => $this->_title_page . '<span>> Upload Data SLIP HSBC</span>',
             "title_msg"     => "Form Create",
             "active_page"   => "import-hsbc",
-            "breadcrumb"    => $this->_breadcrumb . '<li>Upload Data HSBC</li>',
+            "breadcrumb"    => $this->_breadcrumb . '<li>Upload Data SLIP HSBC</li>',
             "back"          => $this->_back,
         );
 
@@ -112,17 +112,71 @@ class Upload extends CI_Controller {
     }
 
     /**
-     * upload data hsbc
+     * upload data slip bni
+     */
+    public function import_bni () {
+        $this->_breadcrumb .= '<li><a href="#">upload</a></li>';
+        //prepare header title.
+        $this->_header = array(
+            "title"         => $this->_title,
+            "title_page"    => $this->_title_page . '<span>> Upload Data SLIP BNI</span>',
+            "title_msg"     => "Form Create",
+            "active_page"   => "import-bni",
+            "breadcrumb"    => $this->_breadcrumb . '<li>Upload Data SLIP BNI</li>',
+            "back"          => $this->_back,
+        );
+
+        $this->_footer = array(
+            "script" => array(
+                $this->_js_path ."import-hsbc.js"
+            )
+        );
+
+        //load the view.
+        $this->load->view(MANAGER_HEADER, $this->_header);
+        $this->load->view($this->_view_folder . 'import-template-bni');
+        $this->load->view(MANAGER_FOOTER, $this->_footer);
+    }
+
+    /**
+     * upload data slip dipo
+     */
+    public function import_dipo () {
+        $this->_breadcrumb .= '<li><a href="#">upload</a></li>';
+        //prepare header title.
+        $this->_header = array(
+            "title"         => $this->_title,
+            "title_page"    => $this->_title_page . '<span>> Upload Data SLIP DIPO</span>',
+            "title_msg"     => "Form Create",
+            "active_page"   => "import-dipo",
+            "breadcrumb"    => $this->_breadcrumb . '<li>Upload Data SLIP DIPO</li>',
+            "back"          => $this->_back,
+        );
+
+        $this->_footer = array(
+            "script" => array(
+                $this->_js_path ."import-hsbc.js"
+            )
+        );
+
+        //load the view.
+        $this->load->view(MANAGER_HEADER, $this->_header);
+        $this->load->view($this->_view_folder . 'import-template-dipo');
+        $this->load->view(MANAGER_FOOTER, $this->_footer);
+    }
+
+    /**
+     * upload data user
      */
     public function import_user () {
         $this->_breadcrumb .= '<li><a href="#">upload</a></li>';
         //prepare header title.
         $this->_header = array(
             "title"         => $this->_title,
-            "title_page"    => $this->_title_page . '<span>> Upload Data User</span>',
+            "title_page"    => $this->_title_page . '<span>> Upload Data User AKS</span>',
             "title_msg"     => "Form Create",
             "active_page"   => "import-user",
-            "breadcrumb"    => $this->_breadcrumb . '<li>Upload Data User</li>',
+            "breadcrumb"    => $this->_breadcrumb . '<li>Upload Data User AKS</li>',
             "back"          => $this->_back,
         );
 
@@ -142,6 +196,58 @@ class Upload extends CI_Controller {
      * validating import section
      */
     public function validate_import_hsbc($data, $line)
+    {
+        $error = "";
+
+        if (check_null_space($data['nik'])) {
+            $error .= "Row " . $line . ": NIK cannot be empty.";
+        }
+
+        if (check_null_space($data['basic_sallary'])) {
+            $error .= "Row " . $line . ": Basic sallary cannot be empty.";
+        }
+
+        if (check_null_space($data['sallary_prorate'])) {
+            $error .= "Row " . $line . ": sallary prorate cannot be empty.";
+        }
+
+        if ($error != "") {
+            return $error;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * validating import section
+     */
+    public function validate_import_bni($data, $line)
+    {
+        $error = "";
+
+        if (check_null_space($data['nik'])) {
+            $error .= "Row " . $line . ": NIK cannot be empty.";
+        }
+
+        if (check_null_space($data['basic_sallary'])) {
+            $error .= "Row " . $line . ": Basic sallary cannot be empty.";
+        }
+
+        if (check_null_space($data['sallary_prorate'])) {
+            $error .= "Row " . $line . ": sallary prorate cannot be empty.";
+        }
+
+        if ($error != "") {
+            return $error;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * validating import section
+     */
+    public function validate_import_dipo($data, $line)
     {
         $error = "";
 
@@ -211,6 +317,10 @@ class Upload extends CI_Controller {
 
         if (check_null_space($data['user_password'])) {
             $error .= "Row " . $line . ": Password cannot be empty.";
+        }
+
+        if (check_null_space($data['user_role_id'])) {
+            $error .= "Row " . $line . ": User Type cannot be empty.";
         }
 
         if ($error != "") {
@@ -408,7 +518,6 @@ class Upload extends CI_Controller {
         echo json_encode($message);
         exit;
     }
-
     /**
     * proses import data to db
     * author : didi ganteng
@@ -596,6 +705,383 @@ class Upload extends CI_Controller {
         exit;
     }
 
+     /**
+    * proses import data to db
+    * author : didi ganteng
+    * it-underground.web.id
+    */
+    public function process_import_bni()
+    {
+        //must ajax and must post.
+        if (!$this->input->is_ajax_request() || $this->input->method(true) != "POST") {
+            exit('No direct script access allowed');
+        }
+
+        //load the model.
+        $this->load->model('Dynamic_model');
+
+        //initial.
+        $message['is_error'] = true;
+        $message['error_msg'] = "";
+        $validate = "";
+        $error_validate_flag = false;
+
+        //check validation
+        if (isset($_FILES['file']['size']) && $_FILES['file']['size'] > 0) {
+            $filename = $_FILES['file']['tmp_name'];
+            //check max file upload
+            if ($_FILES['file']['size'] > MAX_UPLOAD_FILE_SIZE) {
+                $message['error_msg'] = "Maximum file size is ".WORDS_MAX_UPLOAD_FILE_SIZE;
+            } elseif (mime_content_type($filename) != "application/vnd.ms-excel"
+                        && mime_content_type($filename) != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                //check extension if xls dan xlsx
+                $message['error_msg'] = "File must .xls or .xlsx";
+            } else {
+                //load and init library
+                $this->load->library("PHPExcel_reader");
+                $excel = new PHPExcel_reader();
+
+                //read the file and give back the result of the file in array
+                $result = $excel->read_from_excel($filename);
+
+                if ($result['is_error'] == true) {
+                    $message['redirect_to'] = "";
+                    $message['error_msg']   = $result['error_msg'];
+                } else {
+
+                    //begin transaction
+                    $this->db->trans_begin();
+
+                    if (count($result['datas']) > 0) {
+                        //loop the result and insert to db
+                        $line = 2;
+                        foreach ($result['datas'] as $model) {
+                            if (count($model) < 1) {
+                                $validate = "Invalid Template.";
+                                $error_validate_flag = true;
+                                break;
+                            } else {
+                                //check untuk semua kolom apakah null
+                                if (empty($model[0]) && empty($model[1]) && empty($model[2]) && empty($model[3]) && empty($model[4]) && empty($model[5]) && empty($model[6]) && empty($model[7]) && empty($model[8]) && empty($model[9]) && empty($model[10]) && empty($model[11]) && empty($model[12]) && empty($model[13]) && empty($model[14]) && empty($model[15]) && empty($model[16]) && empty($model[17]) && empty($model[18]) && empty($model[19]) && empty($model[20]) && empty($model[21]) && empty($model[22]) && empty($model[23]) && empty($model[24]) && empty($model[25]) && empty($model[26]) && empty($model[27]) && empty($model[27])) {
+                                    $line++;
+                                } else {
+                                    $encode  = base64_encode($model[8]);
+                                    // $encode .= "didiganteng";
+                                    // $fix_encode = $this->db->escape($encode);
+                                    // persiapan data
+                                    $data = array(
+                                        "periode_date"          => $model[0],
+                                        "nik"                   => $model[1],
+                                        "name"                  => $model[2],
+                                        "code"                  => $model[3],
+                                        "status"                => $model[4],
+                                        "team"                  => $model[5],
+                                        "work_days"             => $model[6],
+                                        "position"              => $model[7],
+                                        "basic_sallary"         => $encode,
+                                        "sallary_prorate"       => base64_encode($model[9]),
+                                        "tunjangan_jabatan"     => base64_encode($model[10]),
+                                        "over_time"             => base64_encode($model[11]),
+                                        "commision_taxi"        => base64_encode($model[12]),
+                                        "total"                 => base64_encode($model[13]),
+                                        "commision"             => base64_encode($model[14]),
+                                        "reward"                => base64_encode($model[15]),
+                                        "rapelan_jan_mar"       => base64_encode($model[16]),
+                                        "rapelan_ot_jan_mar"    => base64_encode($model[17]),
+                                        "bpjs_tenaga_kerja_1"   => base64_encode($model[18]),
+                                        "bpjs_pensiun_1"        => base64_encode($model[19]),
+                                        "bpjs_kesehatan_1"      => base64_encode($model[20]),
+                                        "total_gaji_bruto"      => base64_encode($model[21]),
+                                        "pph_pasal_21"          => base64_encode($model[22]),
+                                        "bpjs_tenaga_kerja_2"   => base64_encode($model[23]),
+                                        "bpjs_pensiun_2"        => base64_encode($model[24]),
+                                        "bpjs_kesehatan_2"      => base64_encode($model[25]),
+                                        "potongan_outing"       => base64_encode($model[26]),
+                                        "potongan_parkir"       => base64_encode($model[27]),
+                                        "thp"                   => base64_encode($model[28])
+                                    );
+
+                                    // validasi di jadikan satu di fungsi validate_import.
+                                    $validate = $this->validate_import_hsbc($data, $line);
+
+                                    if ($validate !== true) {
+                                        //if validate false, return error
+                                        $error_validate_flag = true;
+                                        break;
+                                    } else {
+                                        // Prepare 2 dimensions data array for insert_batch
+                                        $today = date("Y-m-d H:i:s");
+                                        $user_upload = $this->session->userdata("user_id");
+                                        $array_insert = array(
+                                            "periode_date"          => $model[0],
+                                            "nik"                   => $model[1],
+                                            "name"                  => $model[2],
+                                            "code"                  => $model[3],
+                                            "status"                => $model[4],
+                                            "team"                  => $model[5],
+                                            "work_days"             => $model[6],
+                                            "position"              => $model[7],
+                                            "basic_sallary"         => $encode,
+                                            "sallary_prorate"       => base64_encode($model[9]),
+                                            "tunjangan_jabatan"     => base64_encode($model[10]),
+                                            "over_time"             => base64_encode($model[11]),
+                                            "commision_taxi"        => base64_encode($model[12]),
+                                            "total"                 => base64_encode($model[13]),
+                                            "commision"             => base64_encode($model[14]),
+                                            "reward"                => base64_encode($model[15]),
+                                            "rapelan_jan_mar"       => base64_encode($model[16]),
+                                            "rapelan_ot_jan_mar"    => base64_encode($model[17]),
+                                            "bpjs_tenaga_kerja_1"   => base64_encode($model[18]),
+                                            "bpjs_pensiun_1"        => base64_encode($model[19]),
+                                            "bpjs_kesehatan_1"      => base64_encode($model[20]),
+                                            "total_gaji_bruto"      => base64_encode($model[21]),
+                                            "pph_pasal_21"          => base64_encode($model[22]),
+                                            "bpjs_tenaga_kerja_2"   => base64_encode($model[23]),
+                                            "bpjs_pensiun_2"        => base64_encode($model[24]),
+                                            "bpjs_kesehatan_2"      => base64_encode($model[25]),
+                                            "potongan_outing"       => base64_encode($model[26]),
+                                            "potongan_parkir"       => base64_encode($model[27]),
+                                            "thp"                   => base64_encode($model[28]),
+                                            "upload_date"           => $today,
+                                            "user_upload_id"        => $user_upload
+                                        );
+
+                                        // insert_batch 
+                                        $insert_data = $this->Dynamic_model->set_model(
+                                            $this->_tbl, 
+                                            $this->_alias, 
+                                            $this->_id)->
+                                        insert(
+                                                $array_insert
+                                        );
+                                        $line++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if ($this->db->trans_status() === false) {
+                        $this->db->trans_rollback();
+                        $message['redirect_to'] = "";
+
+                        if ($error_validate_flag == true) {
+                            $message['error_msg'] = $validate;
+                        } else {
+                            $message['error_msg'] = 'database operation failed.';
+                        }
+                    } else {
+                        $this->db->trans_commit();
+
+                        $message['is_error'] = false;
+
+                        // success.
+                        $message['notif_title']   = "Good!";
+                        $message['notif_message'] = "Data has been imported.";
+
+                        // on insert, not redirected.
+                        $message['redirect_to'] = "";
+                    }
+                }
+            }
+        } else {
+            $message['error_msg'] = 'File is empty (xls or xlsx).';
+        }
+
+        echo json_encode($message);
+        exit;
+    }
+    /**
+    * proses import data to db
+    * author : didi ganteng
+    * it-underground.web.id
+    */
+    public function process_import_dipo()
+    {
+        //must ajax and must post.
+        if (!$this->input->is_ajax_request() || $this->input->method(true) != "POST") {
+            exit('No direct script access allowed');
+        }
+
+        //load the model.
+        $this->load->model('Dynamic_model');
+
+        //initial.
+        $message['is_error'] = true;
+        $message['error_msg'] = "";
+        $validate = "";
+        $error_validate_flag = false;
+
+        //check validation
+        if (isset($_FILES['file']['size']) && $_FILES['file']['size'] > 0) {
+            $filename = $_FILES['file']['tmp_name'];
+            //check max file upload
+            if ($_FILES['file']['size'] > MAX_UPLOAD_FILE_SIZE) {
+                $message['error_msg'] = "Maximum file size is ".WORDS_MAX_UPLOAD_FILE_SIZE;
+            } elseif (mime_content_type($filename) != "application/vnd.ms-excel"
+                        && mime_content_type($filename) != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                //check extension if xls dan xlsx
+                $message['error_msg'] = "File must .xls or .xlsx";
+            } else {
+                //load and init library
+                $this->load->library("PHPExcel_reader");
+                $excel = new PHPExcel_reader();
+
+                //read the file and give back the result of the file in array
+                $result = $excel->read_from_excel($filename);
+
+                if ($result['is_error'] == true) {
+                    $message['redirect_to'] = "";
+                    $message['error_msg']   = $result['error_msg'];
+                } else {
+
+                    //begin transaction
+                    $this->db->trans_begin();
+
+                    if (count($result['datas']) > 0) {
+                        //loop the result and insert to db
+                        $line = 2;
+                        foreach ($result['datas'] as $model) {
+                            if (count($model) < 1) {
+                                $validate = "Invalid Template.";
+                                $error_validate_flag = true;
+                                break;
+                            } else {
+                                //check untuk semua kolom apakah null
+                                if (empty($model[0]) && empty($model[1]) && empty($model[2]) && empty($model[3]) && empty($model[4]) && empty($model[5]) && empty($model[6]) && empty($model[7]) && empty($model[8]) && empty($model[9]) && empty($model[10]) && empty($model[11]) && empty($model[12]) && empty($model[13]) && empty($model[14]) && empty($model[15]) && empty($model[16]) && empty($model[17]) && empty($model[18]) && empty($model[19]) && empty($model[20]) && empty($model[21]) && empty($model[22]) && empty($model[23]) && empty($model[24]) && empty($model[25]) && empty($model[26]) && empty($model[27]) && empty($model[27])) {
+                                    $line++;
+                                } else {
+                                    $encode  = base64_encode($model[8]);
+                                    // $encode .= "didiganteng";
+                                    // $fix_encode = $this->db->escape($encode);
+                                    // persiapan data
+                                    $data = array(
+                                        "periode_date"          => $model[0],
+                                        "nik"                   => $model[1],
+                                        "name"                  => $model[2],
+                                        "code"                  => $model[3],
+                                        "status"                => $model[4],
+                                        "team"                  => $model[5],
+                                        "work_days"             => $model[6],
+                                        "position"              => $model[7],
+                                        "basic_sallary"         => $encode,
+                                        "sallary_prorate"       => base64_encode($model[9]),
+                                        "tunjangan_jabatan"     => base64_encode($model[10]),
+                                        "over_time"             => base64_encode($model[11]),
+                                        "commision_taxi"        => base64_encode($model[12]),
+                                        "total"                 => base64_encode($model[13]),
+                                        "commision"             => base64_encode($model[14]),
+                                        "reward"                => base64_encode($model[15]),
+                                        "rapelan_jan_mar"       => base64_encode($model[16]),
+                                        "rapelan_ot_jan_mar"    => base64_encode($model[17]),
+                                        "bpjs_tenaga_kerja_1"   => base64_encode($model[18]),
+                                        "bpjs_pensiun_1"        => base64_encode($model[19]),
+                                        "bpjs_kesehatan_1"      => base64_encode($model[20]),
+                                        "total_gaji_bruto"      => base64_encode($model[21]),
+                                        "pph_pasal_21"          => base64_encode($model[22]),
+                                        "bpjs_tenaga_kerja_2"   => base64_encode($model[23]),
+                                        "bpjs_pensiun_2"        => base64_encode($model[24]),
+                                        "bpjs_kesehatan_2"      => base64_encode($model[25]),
+                                        "potongan_outing"       => base64_encode($model[26]),
+                                        "potongan_parkir"       => base64_encode($model[27]),
+                                        "thp"                   => base64_encode($model[28])
+                                    );
+
+                                    // validasi di jadikan satu di fungsi validate_import.
+                                    $validate = $this->validate_import_hsbc($data, $line);
+
+                                    if ($validate !== true) {
+                                        //if validate false, return error
+                                        $error_validate_flag = true;
+                                        break;
+                                    } else {
+                                        // Prepare 2 dimensions data array for insert_batch
+                                        $today = date("Y-m-d H:i:s");
+                                        $user_upload = $this->session->userdata("user_id");
+                                        $array_insert = array(
+                                            "periode_date"          => $model[0],
+                                            "nik"                   => $model[1],
+                                            "name"                  => $model[2],
+                                            "code"                  => $model[3],
+                                            "status"                => $model[4],
+                                            "team"                  => $model[5],
+                                            "work_days"             => $model[6],
+                                            "position"              => $model[7],
+                                            "basic_sallary"         => $encode,
+                                            "sallary_prorate"       => base64_encode($model[9]),
+                                            "tunjangan_jabatan"     => base64_encode($model[10]),
+                                            "over_time"             => base64_encode($model[11]),
+                                            "commision_taxi"        => base64_encode($model[12]),
+                                            "total"                 => base64_encode($model[13]),
+                                            "commision"             => base64_encode($model[14]),
+                                            "reward"                => base64_encode($model[15]),
+                                            "rapelan_jan_mar"       => base64_encode($model[16]),
+                                            "rapelan_ot_jan_mar"    => base64_encode($model[17]),
+                                            "bpjs_tenaga_kerja_1"   => base64_encode($model[18]),
+                                            "bpjs_pensiun_1"        => base64_encode($model[19]),
+                                            "bpjs_kesehatan_1"      => base64_encode($model[20]),
+                                            "total_gaji_bruto"      => base64_encode($model[21]),
+                                            "pph_pasal_21"          => base64_encode($model[22]),
+                                            "bpjs_tenaga_kerja_2"   => base64_encode($model[23]),
+                                            "bpjs_pensiun_2"        => base64_encode($model[24]),
+                                            "bpjs_kesehatan_2"      => base64_encode($model[25]),
+                                            "potongan_outing"       => base64_encode($model[26]),
+                                            "potongan_parkir"       => base64_encode($model[27]),
+                                            "thp"                   => base64_encode($model[28]),
+                                            "upload_date"           => $today,
+                                            "user_upload_id"        => $user_upload
+                                        );
+
+                                        // insert_batch 
+                                        $insert_data = $this->Dynamic_model->set_model(
+                                            $this->_tbl, 
+                                            $this->_alias, 
+                                            $this->_id)->
+                                        insert(
+                                                $array_insert
+                                        );
+                                        $line++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if ($this->db->trans_status() === false) {
+                        $this->db->trans_rollback();
+                        $message['redirect_to'] = "";
+
+                        if ($error_validate_flag == true) {
+                            $message['error_msg'] = $validate;
+                        } else {
+                            $message['error_msg'] = 'database operation failed.';
+                        }
+                    } else {
+                        $this->db->trans_commit();
+
+                        $message['is_error'] = false;
+
+                        // success.
+                        $message['notif_title']   = "Good!";
+                        $message['notif_message'] = "Data has been imported.";
+
+                        // on insert, not redirected.
+                        $message['redirect_to'] = "";
+                    }
+                }
+            }
+        } else {
+            $message['error_msg'] = 'File is empty (xls or xlsx).';
+        }
+
+        echo json_encode($message);
+        exit;
+    }
+    /**
+    * proses import data to db
+    * author : didi ganteng
+    * it-underground.web.id
+    */
     public function process_import_user()
     {
         //must ajax and must post.
@@ -660,7 +1146,8 @@ class Upload extends CI_Controller {
                                         "user_position"  => $model[2],
                                         "user_site"      => $model[3],
                                         "user_email"     => $model[4],
-                                        "user_password"  => sha1(ENCRYPT_DEV_AKS.$this->db->escape_str($model[5]))
+                                        "user_password"  => sha1(ENCRYPT_DEV_AKS.$this->db->escape_str($model[5])),
+                                        "user_role_id" => $model[6]
                                     );
 
                                     // validasi di jadikan satu di fungsi validate_import.
@@ -674,6 +1161,19 @@ class Upload extends CI_Controller {
                                         // Prepare 2 dimensions data array for insert_batch
                                         $today = date("Y-m-d H:i:s");
                                         $user_upload = $this->session->userdata("user_id");
+
+                                        if ( $model[6] == "INTERNAL" || $model[6] == "STAFF") {
+                                            $level = 3;
+                                        } else if ($model[6] == "AGENT HSBC") {
+                                            $level = 4;
+                                        } else if( $model[6] == "AGENT BNI") {
+                                            $level = 5;
+                                        } else {
+                                            $level = 6;
+                                        }
+
+                                        //$level = ($model[6] == "STAFF" || $model[6] == "INTERNAL") ? 3 : 4;
+                                        
                                         $array_insert = array(
                                             "user_full_name" => $model[0],
                                             "user_nik"       => $model[1],
@@ -682,20 +1182,21 @@ class Upload extends CI_Controller {
                                             "user_email"     => $model[4],
                                             "user_password"  => sha1(ENCRYPT_DEV_AKS.$this->db->escape_str($model[5])),
                                             "user_created_date" => $today,
-                                            "user_role_id"   => 3,
+                                            "user_role_id"   => $level,
                                             "user_register_date" => $today
                                         );
+                                        // pr($array_insert);exit;
                                         // pr($this->input->post());exit;
                                         // insert_batch 
-                                        $insert_data = $this->Dynamic_model->set_model(
-                                            "mst_user", 
-                                            "mu", 
-                                            "user_id")->
-                                        insert(
-                                                $array_insert
-                                        );
-                                        $line++;
                                     }
+                                    $insert_data = $this->Dynamic_model->set_model(
+                                        "mst_user", 
+                                        "mu", 
+                                        "user_id")->
+                                    insert(
+                                            $array_insert
+                                    );
+                                    $line++;
                                 }
                             }
                         }

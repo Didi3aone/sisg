@@ -54,7 +54,6 @@
     {
         //default values.
         (isset($params["select"])) ? $select = $params["select"] : $select = "*";
-        (isset($params["status"])) ? $status = $params["status"] : $status = STATUS_ACTIVE;
         (isset($params["order_by"]) && $params["order_by"] != null) ? $orderBy = $params["order_by"] : $orderBy = array($this->_pk_field => "asc");
         (isset($params["find_by_pk"])) ? $findByPK = $params["find_by_pk"]: $findByPK = array();
         (isset($params["limit"])) ? $limit = $params["limit"] : $limit = 0;
@@ -71,11 +70,6 @@
         (isset($params["debug"])) ? $debug = $params["debug"] : $debug = false;
 
         $this->db->select($select);
-
-        //status == -1 will show all.
-        if ($status != -1) {
-            $this->db->where($this->_table_alias.".status", $status);
-        }
 
         //for search for PK "id" as array.
         if (count($findByPK) > 0) {

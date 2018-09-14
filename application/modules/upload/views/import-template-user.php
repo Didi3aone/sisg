@@ -9,7 +9,7 @@
                <!--  <a class="btn btn-warning back-button" onclick="window.location.href='/manager/province/lists';" title="Back" rel="tooltip" data-placement="left">
                     <i class="fa fa-arrow-circle-left fa-lg"></i>
                 </a> -->
-                <a class="btn btn-primary btn-s" href="<?php echo base_url(); ?>assets/template-import/TEMPLATE_USER.xlsx">
+                <a class="btn btn-primary btn-s" href="<?php echo base_url(); ?>assets/template-import/TEMPLATE_UPLOAD_USER.xlsx">
                     Download Template &nbsp;&nbsp;
                     <i class="fa fa-download"></i>
                 </a>

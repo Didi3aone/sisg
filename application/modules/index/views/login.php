@@ -9,14 +9,6 @@
             <div class="wthree-pro">
                 <h2>Please login here</h2>
             </div>
-            <?php if ($this->session->flashdata('message')): ?>
-            <section>
-                <div class="alert alert-danger alert-dismissable">
-                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                  <?= $this->session->flashdata('message'); ?>
-                </div>
-            </section>
-            <?php endif; ?>
             <form action="<?php echo site_url('login');?>" method="POST" id="login-form">
                 <div class="pom-agile">
                     <input placeholder="NIK" name="nik" class="user" type="text" required>
@@ -27,19 +19,19 @@
                     <span class="icon2"><i class="fa fa-unlock" aria-hidden="true"></i></span>
                 </div>
                 <div class="sub-w3l">
-                    <h6><a href="<?= site_url('forgot-password'); ?>">Forgot Password?</a></h6>
+                    <h6><a href="<?= site_url('forgot-password'); ?>" target="_blank">Forgot Password?</a></h6>
                     <div class="right-w3l">
                         <button type="submit" value="Login">Sign in</button>&nbsp;
                     </div>
                     <br/>
-                    <p style="color: white;">OR
-                        <a href="<?php echo site_url('user/user-registration'); ?>" class="btn">&nbsp;&nbsp;Register</a>
-                    </p>
+                    <!-- <p style="color: white;">OR
+                        <a href="<?php //echo site_url('user/user-registration'); ?>" class="btn">&nbsp;&nbsp;Register</a>
+                    </p> -->
                 </div>
             </form>
             <br/>
             <div class="col-lg-12" style="color:white;">
-                <p>&copy; <?php echo date('Y') ?> Development AKS. All rights reserved || Design by <a href="http://it-underground.web.id" target="_blank">Didi 3Aone</a></p>
+                <p>&copy; <?php echo date('Y') ?> Development AKS. All rights reserved || Design by <a href="http://it-underground.web.id" target="_blank">IT DEVELOPMENT AKS</a></p>
             </div>
         </div>
     </div>

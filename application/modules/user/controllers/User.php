@@ -14,10 +14,10 @@ class User extends CI_Controller  {
     private $_back = "/devel_aks/user";
     private $_js_path = "/js/pages/admin/";
     private $_view_folder = "user/";
-
-    private $_table = "mst_user";
-    private $_tbl_alias = "mu";
-    private $_id   = "user_id";
+    ## -- defined table -- ##
+    private $_table         = "mst_user";
+    private $_tbl_alias     = "mu";
+    private $_id            = "user_id";
 
     /**
 	 * constructor.
@@ -55,6 +55,93 @@ class User extends CI_Controller  {
         //load the views.
         $this->load->view(MANAGER_HEADER , $header);
         $this->load->view($this->_view_folder . 'index');
+        $this->load->view(MANAGER_FOOTER , $footer);
+    }
+
+    /**
+     * List User hsbc
+     */
+    public function list_hsbc() 
+    {
+        //set header attribute.
+        $header = array(
+            "title"         => $this->_title,
+            "title_page"    => $this->_title_page . '<span>> List All Data User HSBC</span>',
+            "active_page"   => "user-list-hsbc",
+            "breadcrumb"    => $this->_breadcrumb . '<li>User</li>',
+        );
+
+        //set footer attribute (additional script and css).
+        $footer = array(
+            "script" => array(
+                "assets/js/plugins/datatables/jquery.dataTables.min.js",
+                "assets/js/plugins/datatables/dataTables.bootstrap.min.js",
+                "assets/js/plugins/datatable-responsive/datatables.responsive.min.js",
+            ),
+            "view_js_nav" => $this->_view_folder."list_hsbc_js_nav",
+        );
+
+        //load the views.
+        $this->load->view(MANAGER_HEADER , $header);
+        $this->load->view($this->_view_folder . 'index-hsbc');
+        $this->load->view(MANAGER_FOOTER , $footer);
+    }
+
+    /**
+     * List User
+     */
+    public function list_bni() 
+    {
+        //set header attribute.
+        $header = array(
+            "title"         => $this->_title,
+            "title_page"    => $this->_title_page . '<span>> List All Data User BNI</span>',
+            "active_page"   => "user-list-bni",
+            "breadcrumb"    => $this->_breadcrumb . '<li>User</li>',
+        );
+
+        //set footer attribute (additional script and css).
+        $footer = array(
+            "script" => array(
+                "assets/js/plugins/datatables/jquery.dataTables.min.js",
+                "assets/js/plugins/datatables/dataTables.bootstrap.min.js",
+                "assets/js/plugins/datatable-responsive/datatables.responsive.min.js",
+            ),
+            "view_js_nav" => $this->_view_folder."list_bni_js_nav",
+        );
+
+        //load the views.
+        $this->load->view(MANAGER_HEADER , $header);
+        $this->load->view($this->_view_folder . 'index-bni');
+        $this->load->view(MANAGER_FOOTER , $footer);
+    }
+
+    /**
+     * List User
+     */
+    public function list_dipo() 
+    {
+        //set header attribute.
+        $header = array(
+            "title"         => $this->_title,
+            "title_page"    => $this->_title_page . '<span>> List All Data User DIPO</span>',
+            "active_page"   => "user-list",
+            "breadcrumb"    => $this->_breadcrumb . '<li>User</li>',
+        );
+
+        //set footer attribute (additional script and css).
+        $footer = array(
+            "script" => array(
+                "assets/js/plugins/datatables/jquery.dataTables.min.js",
+                "assets/js/plugins/datatables/dataTables.bootstrap.min.js",
+                "assets/js/plugins/datatable-responsive/datatables.responsive.min.js",
+            ),
+            "view_js_nav" => $this->_view_folder."list_dipo_js_nav",
+        );
+
+        //load the views.
+        $this->load->view(MANAGER_HEADER , $header);
+        $this->load->view($this->_view_folder . 'index-dipo');
         $this->load->view(MANAGER_FOOTER , $footer);
     }
 
@@ -475,12 +562,105 @@ class User extends CI_Controller  {
         //sanitize and get inputed data
         $sort_col = sanitize_str_input($this->input->get("order")['0']['column'], "numeric");
 		$sort_dir = sanitize_str_input($this->input->get("order")['0']['dir']);
-		$limit = sanitize_str_input($this->input->get("length"), "numeric");
-		$start = sanitize_str_input($this->input->get("start"), "numeric");
-		$search = sanitize_str_input($this->input->get("search")['value']);
+		$limit    = sanitize_str_input($this->input->get("length"), "numeric");
+		$start    = sanitize_str_input($this->input->get("start"), "numeric");
+		$search   = sanitize_str_input($this->input->get("search")['value']);
+        $filter   = $this->input->get("filter");
+
+		$select = array(
+            "user_id", 
+            "user_full_name",
+            "user_nik", 
+            "user_email", 
+            "user_position",
+            "user_last_login"
+        );
+
+        $column_sort = $select[$sort_col];
+
+        //initialize.
+        $data_filters   = array();
+        $conditions     = array("user_site" => "INTERNAL");
+        $status         = STATUS_ALL;
+
+        if (count ($filter) > 0) {
+            foreach ($filter as $key => $value) {
+                $value = sanitize_str_input($value);
+                switch ($key) {
+                    case 'create_date':
+                        if ($value != "") {
+                            $date = parse_date_range($value);
+                            $conditions["cast(created_date as date) <="] = $date['end'];
+                            $conditions["cast(created_date as date) >="] = $date['start'];
+
+                        }
+                        break;
+                    case 'update_date':
+                        if ($value != "") {
+                            $date = parse_date_range($value);
+                            $conditions["cast(updated_date as date) <="] = $date['end'];
+                            $conditions["cast(updated_date as date) >="] = $date['start'];
+
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //get data
+        $datas = $this->Dynamic_model->set_model($this->_table, $this->_tbl_alias, $this->_id)->get_all_data(array(
+			'select'          => $select,
+            'order_by'        => array($column_sort => $sort_dir),
+			'limit'           => $limit,
+			'start'           => $start,
+			'conditions'      => $conditions,
+            'filter'          => $data_filters,
+			'status'          => $status,
+            "count_all_first" => true,
+            "debug"           => FALSE
+		));
+
+        //get total rows
+        $total_rows = $datas['total'];
+
+        $output = array(
+            "data" => $datas['datas'],
+			"draw" => intval($this->input->get("draw")),
+			"recordsTotal" => $total_rows,
+			"recordsFiltered" => $total_rows,
+		);
+
+        //encoding and returning.
+        $this->output->set_content_type('application/json');
+        echo json_encode($output);
+        exit;
+    }
+
+    /**
+     * Function to get list_all_data hsbc
+     */
+    public function list_all_data_hsbc() 
+    {
+        //must ajax and must get.
+        if (!$this->input->is_ajax_request() || $this->input->method(true) != "GET") {
+            exit('No direct script access allowed');
+        }
+
+        //load model
+        $this->load->model('Dynamic_model');
+
+        //sanitize and get inputed data
+        $sort_col = sanitize_str_input($this->input->get("order")['0']['column'], "numeric");
+        $sort_dir = sanitize_str_input($this->input->get("order")['0']['dir']);
+        $limit = sanitize_str_input($this->input->get("length"), "numeric");
+        $start = sanitize_str_input($this->input->get("start"), "numeric");
+        $search = sanitize_str_input($this->input->get("search")['value']);
         $filter = $this->input->get("filter");
 
-		$select = array("user_id", "user_full_name","user_nik", "user_email", "user_position","user_last_login");
+        $select = array("user_id", "user_full_name","user_nik", "user_email", "user_position","user_last_login");
         // $joined = array(
         //     "trs_user_role tur" => 
         //     array("tur.role_id" => $this->_tbl_alias.".user_role_id")
@@ -490,7 +670,7 @@ class User extends CI_Controller  {
 
         //initialize.
         $data_filters = array();
-        $conditions = array();
+        $conditions  = array("user_site" => "HSBC");
         $status = STATUS_ALL;
 
         if (count ($filter) > 0) {
@@ -522,26 +702,206 @@ class User extends CI_Controller  {
 
         //get data
         $datas = $this->Dynamic_model->set_model($this->_table, $this->_tbl_alias, $this->_id)->get_all_data(array(
-			'select' => $select,
+            'select' => $select,
             // 'joined'   => $joined,
             'order_by' => array($column_sort => $sort_dir),
-			'limit' => $limit,
-			'start' => $start,
-			'conditions' => $conditions,
+            'limit' => $limit,
+            'start' => $start,
+            'conditions' => $conditions,
             'filter' => $data_filters,
-			'status' => $status,
+            'status' => $status,
             "count_all_first" => true,
-		));
+        ));
 
         //get total rows
         $total_rows = $datas['total'];
 
         $output = array(
             "data" => $datas['datas'],
-			"draw" => intval($this->input->get("draw")),
-			"recordsTotal" => $total_rows,
-			"recordsFiltered" => $total_rows,
-		);
+            "draw" => intval($this->input->get("draw")),
+            "recordsTotal" => $total_rows,
+            "recordsFiltered" => $total_rows,
+        );
+
+        //encoding and returning.
+        $this->output->set_content_type('application/json');
+        echo json_encode($output);
+        exit;
+    }
+
+    /**
+     * Function to get list_all_data admin
+     */
+    public function list_all_data_bni() 
+    {
+        //must ajax and must get.
+        if (!$this->input->is_ajax_request() || $this->input->method(true) != "GET") {
+            exit('No direct script access allowed');
+        }
+
+        //load model
+        $this->load->model('Dynamic_model');
+
+        //sanitize and get inputed data
+        $sort_col = sanitize_str_input($this->input->get("order")['0']['column'], "numeric");
+        $sort_dir = sanitize_str_input($this->input->get("order")['0']['dir']);
+        $limit = sanitize_str_input($this->input->get("length"), "numeric");
+        $start = sanitize_str_input($this->input->get("start"), "numeric");
+        $search = sanitize_str_input($this->input->get("search")['value']);
+        $filter = $this->input->get("filter");
+
+        $select = array("user_id", "user_full_name","user_nik", "user_email", "user_position","user_last_login");
+        // $joined = array(
+        //     "trs_user_role tur" => 
+        //     array("tur.role_id" => $this->_tbl_alias.".user_role_id")
+        // );
+
+        $column_sort = $select[$sort_col];
+
+        //initialize.
+        $data_filters = array();
+        $conditions = array("user_site" => "BNI");
+        $status = STATUS_ALL;
+
+        if (count ($filter) > 0) {
+            foreach ($filter as $key => $value) {
+                $value = sanitize_str_input($value);
+                switch ($key) {
+                    case 'create_date':
+                        if ($value != "") {
+                            $date = parse_date_range($value);
+                            $conditions["cast(created_date as date) <="] = $date['end'];
+                            $conditions["cast(created_date as date) >="] = $date['start'];
+
+                        }
+                        break;
+                    case 'update_date':
+                        if ($value != "") {
+                            $date = parse_date_range($value);
+                            $conditions["cast(updated_date as date) <="] = $date['end'];
+                            $conditions["cast(updated_date as date) >="] = $date['start'];
+
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //get data
+        $datas = $this->Dynamic_model->set_model($this->_table, $this->_tbl_alias, $this->_id)->get_all_data(array(
+            'select' => $select,
+            // 'joined'   => $joined,
+            'order_by' => array($column_sort => $sort_dir),
+            'limit' => $limit,
+            'start' => $start,
+            'conditions' => $conditions,
+            'filter' => $data_filters,
+            'status' => $status,
+            "count_all_first" => true,
+        ));
+
+        //get total rows
+        $total_rows = $datas['total'];
+
+        $output = array(
+            "data" => $datas['datas'],
+            "draw" => intval($this->input->get("draw")),
+            "recordsTotal" => $total_rows,
+            "recordsFiltered" => $total_rows,
+        );
+
+        //encoding and returning.
+        $this->output->set_content_type('application/json');
+        echo json_encode($output);
+        exit;
+    }
+
+    /**
+     * Function to get list_all_data admin
+     */
+    public function list_all_data_dipo() 
+    {
+        //must ajax and must get.
+        if (!$this->input->is_ajax_request() || $this->input->method(true) != "GET") {
+            exit('No direct script access allowed');
+        }
+
+        //load model
+        $this->load->model('Dynamic_model');
+
+        //sanitize and get inputed data
+        $sort_col = sanitize_str_input($this->input->get("order")['0']['column'], "numeric");
+        $sort_dir = sanitize_str_input($this->input->get("order")['0']['dir']);
+        $limit = sanitize_str_input($this->input->get("length"), "numeric");
+        $start = sanitize_str_input($this->input->get("start"), "numeric");
+        $search = sanitize_str_input($this->input->get("search")['value']);
+        $filter = $this->input->get("filter");
+
+        $select = array("user_id", "user_full_name","user_nik", "user_email", "user_position","user_last_login");
+        // $joined = array(
+        //     "trs_user_role tur" => 
+        //     array("tur.role_id" => $this->_tbl_alias.".user_role_id")
+        // );
+
+        $column_sort = $select[$sort_col];
+
+        //initialize.
+        $data_filters = array();
+        $conditions = array("user_site" => "DIPO");
+        $status = STATUS_ALL;
+
+        if (count ($filter) > 0) {
+            foreach ($filter as $key => $value) {
+                $value = sanitize_str_input($value);
+                switch ($key) {
+                    case 'create_date':
+                        if ($value != "") {
+                            $date = parse_date_range($value);
+                            $conditions["cast(created_date as date) <="] = $date['end'];
+                            $conditions["cast(created_date as date) >="] = $date['start'];
+
+                        }
+                        break;
+                    case 'update_date':
+                        if ($value != "") {
+                            $date = parse_date_range($value);
+                            $conditions["cast(updated_date as date) <="] = $date['end'];
+                            $conditions["cast(updated_date as date) >="] = $date['start'];
+
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //get data
+        $datas = $this->Dynamic_model->set_model($this->_table, $this->_tbl_alias, $this->_id)->get_all_data(array(
+            'select' => $select,
+            // 'joined'   => $joined,
+            'order_by' => array($column_sort => $sort_dir),
+            'limit' => $limit,
+            'start' => $start,
+            'conditions' => $conditions,
+            'filter' => $data_filters,
+            'status' => $status,
+            "count_all_first" => true,
+        ));
+
+        //get total rows
+        $total_rows = $datas['total'];
+
+        $output = array(
+            "data" => $datas['datas'],
+            "draw" => intval($this->input->get("draw")),
+            "recordsTotal" => $total_rows,
+            "recordsFiltered" => $total_rows,
+        );
 
         //encoding and returning.
         $this->output->set_content_type('application/json');

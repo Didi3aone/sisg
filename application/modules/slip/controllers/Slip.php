@@ -64,7 +64,7 @@ class Slip extends CI_Controller  {
     }
 
     /**
-     * List Admin
+     * List hsbc
      */
     public function list() {
         //set header attribute.
@@ -93,9 +93,69 @@ class Slip extends CI_Controller  {
         $this->load->view(MANAGER_FOOTER , $footer);
     }
 
+    /**
+     * List hsbc
+     */
+    public function list_bni() {
+        //set header attribute.
+        $header = array(
+            "title"         => $this->_title,
+            "title_page"    => $this->_title_page . '<span>> List</span>',
+            "active_page"   => "slip-bni-list",
+            "breadcrumb"    => $this->_breadcrumb . '<li>SLIP</li>',
+        );
+
+        //set footer attribute (additional script and css).
+        $footer = array(
+            "script" => array(
+                "assets/js/plugins/datatables/jquery.dataTables.min.js",
+                "assets/js/plugins/datatables/dataTables.bootstrap.min.js",
+                "assets/js/plugins/datatable-responsive/datatables.responsive.min.js",
+                "assets/js/jquery.PrintPage.js"
+            ),
+            "view_js_nav" => 
+                $this->_view_folder."list_js_bni"
+        );
+
+        //load the views.
+        $this->load->view(MANAGER_HEADER , $header);
+        $this->load->view($this->_view_folder . 'list-bni');
+        $this->load->view(MANAGER_FOOTER , $footer);
+    }
+
+    /**
+     * List dipo
+     */
+    public function list_dipo() {
+        //set header attribute.
+        $header = array(
+            "title"         => $this->_title,
+            "title_page"    => $this->_title_page . '<span>> List</span>',
+            "active_page"   => "slip-dipo-list",
+            "breadcrumb"    => $this->_breadcrumb . '<li>SLIP</li>',
+        );
+
+        //set footer attribute (additional script and css).
+        $footer = array(
+            "script" => array(
+                "assets/js/plugins/datatables/jquery.dataTables.min.js",
+                "assets/js/plugins/datatables/dataTables.bootstrap.min.js",
+                "assets/js/plugins/datatable-responsive/datatables.responsive.min.js",
+                "assets/js/jquery.PrintPage.js"
+            ),
+            "view_js_nav" => 
+                $this->_view_folder."list_js_dipo"
+        );
+
+        //load the views.
+        $this->load->view(MANAGER_HEADER , $header);
+        $this->load->view($this->_view_folder . 'list-dipo');
+        $this->load->view(MANAGER_FOOTER , $footer);
+    }
+
     ////////////////////////////// AJAX CALL ////////////////////////////////////
     /**
-     * Function to get list_all_data admin
+     * Function to get list_all_data staff
      */
     public function list_all_data() {
         //must ajax and must get.
@@ -131,7 +191,7 @@ class Slip extends CI_Controller  {
         $data_filters   = array();
         $conditions     = array();
         $level = $this->session->userdata("level");
-        if($level == "STAFF AKS") {
+        if($level == "STAFF INTERNAL") {
             $conditions = array("mu.user_nik" => $nik);
         }
         $status = STATUS_ALL;
@@ -195,12 +255,11 @@ class Slip extends CI_Controller  {
         echo json_encode($output);
         exit;
     }
-
     ////////////////////////////// AJAX CALL ////////////////////////////////////
     /**
-     * Function to get list_all_data admin
+     * Function to get list_all_data hsbc
      */
-    public function list_all_datas() {
+    public function list_all_data_hsbc() {
         //must ajax and must get.
         if (!$this->input->is_ajax_request() || $this->input->method(true) != "GET") {
             exit('No direct script access allowed');
@@ -235,7 +294,213 @@ class Slip extends CI_Controller  {
         $data_filters   = array();
         $conditions     = array();
         $level = $this->session->userdata("level");
-        if($level == "STAFF HSBC") {
+        if($level == "AGENT HSBC") {
+            $conditions = array("mu.user_nik" => $nik);
+        }
+        $status = STATUS_ALL;
+
+        if (count ($filter) > 0) {
+            foreach ($filter as $key => $value) {
+                $value = sanitize_str_input($value);
+                switch ($key) {
+                    case 'nik':
+                        if ($value != "") {
+                            $data_filters['lower(mu.user_nik)'] = $value;
+                        }
+                        break;
+
+                    case 'name':
+                        if ($value != "") {
+                            $data_filters['lower(name)'] = $value;
+                        }
+                        break;
+                    case 'periode_date':
+                        if ($value != "") {
+                            $date = parse_date_range($value);
+                            $conditions["cast(periode_date as date) <="] = $date['end'];
+                            $conditions["cast(periode_date as date) >="] = $date['start'];
+
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //get data
+        $datas = $this->Dynamic_model->set_model($this->_tbl, $this->_alias, $this->_id)->get_all_data(array(
+            'select'             => $select,
+            'left_joined'        => $joined,
+            'order_by'           => array($column_sort => $sort_dir),
+            'limit'              => $limit,
+            'start'              => $start,
+            'conditions'         => $conditions,
+            'filter'             => $data_filters,
+            'status'             => $status,
+            "count_all_first"    => true,
+            "debug"              => false
+        ));
+        //get total rows
+        $total_rows = $datas['total'];
+
+        // $get_decode = 
+        $output = array(
+            "data" => $datas['datas'],
+            "draw" => intval($this->input->get("draw")),
+            "recordsTotal" => $total_rows,
+            "recordsFiltered" => $total_rows,
+        );
+
+        //encoding and returning.
+        $this->output->set_content_type('application/json');
+        echo json_encode($output);
+        exit;
+    }
+    ////////////////////////////// AJAX CALL ////////////////////////////////////
+    /**
+     * Function to get list_all_data hsbc
+     */
+    public function list_all_data_bni() {
+        //must ajax and must get.
+        if (!$this->input->is_ajax_request() || $this->input->method(true) != "GET") {
+            exit('No direct script access allowed');
+        }
+
+        //load model
+        $this->load->model('Dynamic_model');
+
+        //sanitize and get inputed data
+        $sort_col = sanitize_str_input($this->input->get("order")['0']['column'], "numeric");
+        $sort_dir = sanitize_str_input($this->input->get("order")['0']['dir']);
+        $limit    = sanitize_str_input($this->input->get("length"), "numeric");
+        $start    = sanitize_str_input($this->input->get("start"), "numeric");
+        $search   = sanitize_str_input($this->input->get("search")['value']);
+        $filter   = $this->input->get("filter");
+
+        $select = array(
+            'upload_id',
+            'nik',
+            'name',
+            'basic_sallary',
+            // 'FROM_BASE64(SUBSTRING(basic_sallary,1,12)) as des_call',
+            'upload_date'
+        );
+
+        $joined = array("mst_user mu" => array("mu.user_nik" => $this->_alias.".nik"));
+
+        $column_sort = $select[$sort_col];
+        //get nik by user login
+        $nik = $this->session->userdata("nik");
+        //initialize.
+        $data_filters   = array();
+        $conditions     = array();
+        $level = $this->session->userdata("level");
+        if($level == "AGENT BNI") {
+            $conditions = array("mu.user_nik" => $nik);
+        }
+        $status = STATUS_ALL;
+
+        if (count ($filter) > 0) {
+            foreach ($filter as $key => $value) {
+                $value = sanitize_str_input($value);
+                switch ($key) {
+                    case 'nik':
+                        if ($value != "") {
+                            $data_filters['lower(mu.user_nik)'] = $value;
+                        }
+                        break;
+
+                    case 'name':
+                        if ($value != "") {
+                            $data_filters['lower(name)'] = $value;
+                        }
+                        break;
+                    case 'periode_date':
+                        if ($value != "") {
+                            $date = parse_date_range($value);
+                            $conditions["cast(periode_date as date) <="] = $date['end'];
+                            $conditions["cast(periode_date as date) >="] = $date['start'];
+
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //get data
+        $datas = $this->Dynamic_model->set_model($this->_tbl, $this->_alias, $this->_id)->get_all_data(array(
+            'select'             => $select,
+            'left_joined'        => $joined,
+            'order_by'           => array($column_sort => $sort_dir),
+            'limit'              => $limit,
+            'start'              => $start,
+            'conditions'         => $conditions,
+            'filter'             => $data_filters,
+            'status'             => $status,
+            "count_all_first"    => true,
+            "debug"              => false
+        ));
+        //get total rows
+        $total_rows = $datas['total'];
+
+        // $get_decode = 
+        $output = array(
+            "data" => $datas['datas'],
+            "draw" => intval($this->input->get("draw")),
+            "recordsTotal" => $total_rows,
+            "recordsFiltered" => $total_rows,
+        );
+
+        //encoding and returning.
+        $this->output->set_content_type('application/json');
+        echo json_encode($output);
+        exit;
+    }
+    ////////////////////////////// AJAX CALL ////////////////////////////////////
+    /**
+     * Function to get list_all_data hsbc
+     */
+    public function list_all_data_dipo() {
+        //must ajax and must get.
+        if (!$this->input->is_ajax_request() || $this->input->method(true) != "GET") {
+            exit('No direct script access allowed');
+        }
+
+        //load model
+        $this->load->model('Dynamic_model');
+
+        //sanitize and get inputed data
+        $sort_col = sanitize_str_input($this->input->get("order")['0']['column'], "numeric");
+        $sort_dir = sanitize_str_input($this->input->get("order")['0']['dir']);
+        $limit    = sanitize_str_input($this->input->get("length"), "numeric");
+        $start    = sanitize_str_input($this->input->get("start"), "numeric");
+        $search   = sanitize_str_input($this->input->get("search")['value']);
+        $filter   = $this->input->get("filter");
+
+        $select = array(
+            'upload_id',
+            'nik',
+            'name',
+            'basic_sallary',
+            // 'FROM_BASE64(SUBSTRING(basic_sallary,1,12)) as des_call',
+            'upload_date'
+        );
+
+        $joined = array("mst_user mu" => array("mu.user_nik" => $this->_alias.".nik"));
+
+        $column_sort = $select[$sort_col];
+        //get nik by user login
+        $nik = $this->session->userdata("nik");
+        //initialize.
+        $data_filters   = array();
+        $conditions     = array();
+        $level = $this->session->userdata("level");
+        if($level == "AGENT BNI") {
             $conditions = array("mu.user_nik" => $nik);
         }
         $status = STATUS_ALL;
